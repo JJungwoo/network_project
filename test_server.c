@@ -78,12 +78,12 @@ void *server_recv(void *data)
 			agent_check = 1;
 			printf("recv data\n");
 			printHex("test", svrConn->buffer, agent_info_packet);
-			end_cnt--;
-			if(!end_cnt)	// agent_check after update_agent recv 
-				system_down = 1;
 		}
 		else {
 			printf("else \n");
+			end_cnt--;
+			if(!end_cnt)	// agent_check after update_agent recv
+				system_down = 1;
 		}
 		printf("check ret:(%d), end_cnt(%d) \n", ret, end_cnt);
 		sleep(1);
@@ -103,81 +103,11 @@ int remove_packet(void **data)
 	return 0;
 }
 
-int make_packet(us char *data, size_t data_size)
-{
-	us char *pkt_data, *pkt_tmp;
-	size_t pkt_data_size;
-	packet_header_t pheader;
-
-	pkt_data_size = pkt_head_size;
-
-	pkt_data = (us char *)malloc(pkt_data_size);
-	pkt_tmp = pkt_data;
-
-	// input ex data
-	pheader.type = 2004;
-	pheader.version = 1;
-	pheader.time = 0.0;
-	pheader.total_length = (int) data_size;
-	pheader.count = 1;
-	pheader.data = data;
-
-	PKT_ADD_INT16(pkt_tmp, pheader.type);
-	PKT_ADD_INT16(pkt_tmp, pheader.version);
-	
-
-
-
-	return 0;
-}
-
-int make_update_packet(void *data_ptr)
-{
-	int fd;
-	unsigned char *pkt_data, *pkt_tmp;
-	size_t pkt_data_size;
-
-	req_update_agent_t ru_agent;
-	ru_agent.seq = 01;
-	strcpy(ru_agent.version, "1.0.0");
-	
-	fd = open("./mongomon", O_RDONLY);
-	if(-1 == fd) {
-		printf("[make_update_packet] open has failed. (%d) \n", errno);
-		return -1;
-	}
-
-	lseek(fd, 0, SEEK_END);
-	ru_agent.binary_length = lseek(fd, 0, SEEK_CUR);
-	lseek(fd, 0, SEEK_SET);
-
-	ru_agent.binary = (char *)malloc(sizeof(char) * ru_agent.binary_length);
-	read(fd, ru_agent.binary, ru_agent.binary_length);
-
-	printf("[make_update_packet] binary_length(%d) \n", ru_agent.binary_length);
-
-	pkt_data_size = (4 + 32 + 4 + ru_agent.binary_length);
-	
-	pkt_data = (us char *)malloc(pkt_data_size);
-	pkt_tmp = pkt_data;
-
-	PKT_ADD_INT32(pkt_tmp, ru_agent.seq);
-	PKT_ADD_STRING(pkt_tmp, ru_agent.version, sizeof(ru_agent.version));
-	PKT_ADD_INT32(pkt_tmp, ru_agent.binary_length);
-	PKT_ADD_BIN(pkt_tmp, ru_agent.binary, ru_agent.binary_length);
-
-	make_packet(pkt_data, pkt_data_size);
-
-	close(fd);
-
-	return ru_agent.binary_length;
-}
-
 void *server_send(void *data)
 {
+	int ret = -1;
 	svr_conn *svrConn = NULL;
 	svrConn = (svr_conn *)data;
-
 
 	printf("start server_send() \n");
 
@@ -185,8 +115,12 @@ void *server_send(void *data)
 	{
 		if(agent_check)
 		{
-			
-
+			ret = send(svrConn->recv_socket, "TEST", strlen("TEST"), 0);
+			if(ret < 0){
+				printf("send has failed(ret:%d). \n", ret);
+				return;
+			}
+			printf("send ret(%d) \n", ret);
 			break;	
 		}
 
