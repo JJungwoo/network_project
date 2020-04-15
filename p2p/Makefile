@@ -1,16 +1,17 @@
+CC = gcc
+CFLAGS = -pthread
+TARGET = build/pear_agent
 
 
-all : test_server
+$(TARGET) : pear_agent.o common.o
+	$(CC) $(CFLAGS) -o $(TARGET) build/pear_agent.o build/common.o
 
-test_server : test_server.o common.o
-	gcc -o test_server test_server.o common.o -pthread
+pear_agent.o : pear_agent.c
+	$(CC) $(CFLAGS) -c -o build/pear_agent.o pear_agent.c
 
-test_server.o : test_server.c
-	gcc -c -o test_server.o test_server.c
-
-common.o : common.c
-	gcc -c -o common.o common.c
+common.o : ../common.c
+	$(CC) $(CFLAGS) -c -o build/common.o ../common.c
 
 clean :
-	rm -rf *.o test_server
+	rm -rf *.o $(TARGET) build/*.o
 
