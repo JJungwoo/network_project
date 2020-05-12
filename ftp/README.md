@@ -1,8 +1,8 @@
 # FTP Server
 
-** ftp client & ftp server **
+**네트워크 파일 전송 프로그램**
 
-네트워크 파일 전송 프로그램 
+### ftp client 
 
 - client Usage
 
@@ -11,6 +11,7 @@
   - server conneted
   - file send & recv
 
+### ftp server
 
 - server 기능
   - user management
