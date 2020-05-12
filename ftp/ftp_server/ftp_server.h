@@ -21,7 +21,7 @@
 #define FAIL -1
 #define OK 0
 
-typedef struct pear_conn_st{
+typedef struct ftp_conn_st{
 	// server 
 	int recv_sockfd;
 	int recv_len;
@@ -33,6 +33,6 @@ typedef struct pear_conn_st{
 	struct sockaddr_in sendaddr;
 
 	char buffer[BUF_LEN];
-}pconn;
+}conn;
 
 

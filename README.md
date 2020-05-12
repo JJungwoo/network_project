@@ -1,11 +1,9 @@
 # network_project
 
-socket 채팅 프로그램을 다양한 연결 방식으로 구현
+## FTP Project
 
-## 1:1 socket connection
+** 네트워크 파일 전송 프로그램 ** 
 
-
-## 1:N socket connection (multi client single server)
 
 
 

@@ -33,6 +33,6 @@ typedef struct pear_conn_st{
 	struct sockaddr_in sendaddr;
 
 	char buffer[BUF_LEN];
-}pconn;
+}conn;
 
 

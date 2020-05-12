@@ -1,4 +1,4 @@
-#include "ftp_server.h"
+#include "ftp_client.h"
 
 conn gconn;
 
@@ -9,8 +9,8 @@ void print_info()
 	printf("#    ftp server     # \n");
 	printf("##################### \n");
 	//printf("============================= \n");
-	printf("-h : Help to ftp agent usage \n");
-	printf("-v : Confirm to ftp agent version \n");
+	printf("-h : Help to p2p agent usage \n");
+	printf("-v : Confirm to p2p agent version \n");
 }
 
 int create_socket()
@@ -97,6 +97,10 @@ int main(int argc, char **argv)
 	}
 
 	signal(SIGINT, signal_handler);
+	/*while(1){
+		printf("TEST\n");
+		sleep(10);
+	}*/
 
 	ret = create_socket();
 	if(ret == FAIL) 
@@ -105,29 +109,14 @@ int main(int argc, char **argv)
 		return FAIL;
 	}
 
+	printf("%d \n", gconn.recv_sockfd);
 
-	ret = create_conn_st(9999);
-	if(ret == FAIL) 
-	{
-		printf("create_conn_st failed (ret:%d) \n", ret);
-		return FAIL;
+	ret = connect(gconn.recv_sockfd, (struct sockaddr*)&gconn.recvaddr, sizeof(gconn.recvaddr));
+	if(ret == FAIL) {
+		close_socket(gconn.recv_sockfd);
 	}
-
-	printf("No execute to target server \n");
-
-	while(1)
-	{
-		printf("Listening...\n");
-		gconn.send_sockfd = accept(gconn.recv_sockfd, 
-			(struct sockaddr*)&gconn.recvaddr, (socklen_t *)&gconn.recv_addr_len);
-
-		if(gconn.send_sockfd == FAIL)
-		{
-			printf("accept failed (ret:%d)(errno:%d) \n", gconn.send_sockfd, errno);
-			return FAIL;
-		}
-
-		printf("Connected Client \n");
+	else {
+		printf("Connected Success \n");
 	}
 
 	close_socket();
